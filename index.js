@@ -13,14 +13,18 @@
  *    add                    O(log2(n))
  *    removeByReference      O(log2(n))
  *    getCount               O(1)
+ *    popSmallest            O(log2(n))
+ *    popGreatest            O(log2(n))
  *    getSmallestAbove       O(log2(n))
  *    getGreatestBelow       O(log2(n))
- *    forEach                O(n * P) where P is the complexity of the processing function
- *    forEachReverse         O(n * P) where P is the complexity of the processing function
+ *    forEach                O(n * p)
+ *    forEachReverse         O(n * p)
  *    toArray                O(n)
  *    clear                  O(n)
  *
  *    Memory Complexity in O(n)
+ *
+ *    Where ```n``` is the number of elements in the tree and ```p``` the complexity of the process function
  */
 
 function TreeNode(obj, container) {
@@ -46,6 +50,34 @@ AvlTree.prototype._addLeft = function (node, parent) {
 AvlTree.prototype._addRight = function (node, parent) {
 	node.parent = parent;
 	parent.right = node;
+};
+
+AvlTreeList.prototype.popSmallest = function () {
+	// Fetching the node of the smallest element
+	var smallestNode = this.root;
+	while (smallestNode.left !== null) {
+		smallestNode = smallestNode.left;
+	}
+
+	// Removing it
+	this.removeByReference(smallestNode);
+
+	// Returning smallest element
+	return smallestNode.object;
+};
+
+AvlTreeList.prototype.popGreatest = function () {
+	// Fetching the node of the greatest element
+	var greatestNode = this.root;
+	while (greatestNode.right !== null) {
+		greatestNode = greatestNode.right;
+	}
+
+	// Removing it
+	this.removeByReference(greatestNode);
+
+	// Returning greatest element
+	return greatestNode.object;
 };
 
 AvlTree.prototype.add = function (obj) {
