@@ -52,7 +52,7 @@ AvlTree.prototype._addRight = function (node, parent) {
 	parent.right = node;
 };
 
-AvlTreeList.prototype.popSmallest = function () {
+AvlTree.prototype.popSmallest = function () {
 	// Fetching the node of the smallest element
 	var smallestNode = this.root;
 	while (smallestNode.left !== null) {
@@ -66,7 +66,7 @@ AvlTreeList.prototype.popSmallest = function () {
 	return smallestNode.object;
 };
 
-AvlTreeList.prototype.popGreatest = function () {
+AvlTree.prototype.popGreatest = function () {
 	// Fetching the node of the greatest element
 	var greatestNode = this.root;
 	while (greatestNode.right !== null) {
