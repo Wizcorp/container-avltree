@@ -19,7 +19,9 @@ forEachReverse    | O(n * p)
 toArray           | O(n)
 clear             | O(n)
 
-Where ```n``` is the number of elements in the tree and ```p``` the complexity of the process function
+Where:
+- ```n``` is the number of elements in the tree
+- ```p``` is the complexity of the processing function.
 
 
 ## API usage

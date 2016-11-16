@@ -5,26 +5,7 @@
  *
  * @param {function} comparisonFunction comparison function that takes two parameters a and b and returns a number
  *
- * @desc Avl Tree data structure, keep elements sorted, removal and insertion in O(log2(n))
- *
- *    Method                Time Complexity
- *    ___________________________________
- *
- *    add                    O(log2(n))
- *    removeByReference      O(log2(n))
- *    getCount               O(1)
- *    popSmallest            O(log2(n))
- *    popGreatest            O(log2(n))
- *    getSmallestAbove       O(log2(n))
- *    getGreatestBelow       O(log2(n))
- *    forEach                O(n * p)
- *    forEachReverse         O(n * p)
- *    toArray                O(n)
- *    clear                  O(n)
- *
- *    Memory Complexity in O(n)
- *
- *    Where ```n``` is the number of elements in the tree and ```p``` the complexity of the process function
+ * @desc Avl Tree data structure, keep elements sorted.
  */
 
 function TreeNode(obj, container) {
@@ -438,9 +419,9 @@ AvlTree.prototype.forEach = function (processingFunc, params) {
 
 AvlTree.prototype._forEachReverse = function (node, processingFunc, params) {
 	if (node !== null) {
-		this._forEach(node.right, processingFunc, params);
+		this._forEachReverse(node.right, processingFunc, params);
 		processingFunc(node.object, params);
-		this._forEach(node.left, processingFunc, params);
+		this._forEachReverse(node.left, processingFunc, params);
 	}
 };
 
@@ -468,3 +449,4 @@ AvlTree.prototype.toArray = function () {
 };
 
 module.exports = AvlTree;
+
