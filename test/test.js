@@ -231,20 +231,20 @@ describe('avltree-js tests', function() {
 			tree.add(7);
 			tree.removeByReference(four);
 
-				assert.strictEqual(tree.root.object, 5);
-				assert.strictEqual(tree.root.height, 3);
+			assert.strictEqual(tree.root.object, 5);
+			assert.strictEqual(tree.root.height, 3);
 
-				assert.strictEqual(tree.root.left.object, 2);
-				assert.strictEqual(tree.root.left.height, 2);
-				assert.strictEqual(tree.root.right.object, 6);
-				assert.strictEqual(tree.root.right.height, 2);
+			assert.strictEqual(tree.root.left.object, 2);
+			assert.strictEqual(tree.root.left.height, 2);
+			assert.strictEqual(tree.root.right.object, 6);
+			assert.strictEqual(tree.root.right.height, 2);
 
-				assert.strictEqual(tree.root.left.left.object, 1);
-				assert.strictEqual(tree.root.left.left.height, 1);
-				assert.strictEqual(tree.root.left.right.object, 3);
-				assert.strictEqual(tree.root.left.right.height, 1);
-				assert.strictEqual(tree.root.right.right.object, 7);
-				assert.strictEqual(tree.root.right.right.height, 1);
+			assert.strictEqual(tree.root.left.left.object, 1);
+			assert.strictEqual(tree.root.left.left.height, 1);
+			assert.strictEqual(tree.root.left.right.object, 3);
+			assert.strictEqual(tree.root.left.right.height, 1);
+			assert.strictEqual(tree.root.right.right.object, 7);
+			assert.strictEqual(tree.root.right.right.height, 1);
 		});
 		it('should remove an element with two children, with a large tree, near bottom', function () {
 			tree.add(1);
