@@ -105,84 +105,113 @@ AvlTree.prototype.add = function (obj) {
 		}
 	}
 
-	this._balance(newNode.parent);
+	if (current.height === 1) {
+		this._balance(newNode.parent, false);
+	}
 
 	return newNode;
 };
 
 AvlTree.prototype._balanceLeftRight = function (node) {
-	var left = node.left;
+	var left  = node.left;
+	var right = left.right;
+
 	var a = left.left;
-	var b = left.right.left;
+	var b = right.left;
 
-	left.right.left = left;
-	node.left = left.right;
-	left = node.left;
-	left.parent = node;
+	right.left = left;
+	node.left  = right;
 
-	var leftLeft = left.left;
-	leftLeft.parent = left;
-	leftLeft.left = a;
-	leftLeft.right = b;
+	right.parent = node;
+	left.parent  = right;
+
+	left.left  = a;
+	left.right = b;
+
+	var aHeight = 0;
 	if (a !== null) {
-		a.parent = leftLeft;
-	}
-	if (b !== null) {
-		b.parent = leftLeft;
+		aHeight = a.height;
+		a.parent = left;
 	}
 
-	updateHeight(node.left.left);
-	updateHeight(node.left);
+	var bHeight = 0;
+	if (b !== null) {
+		bHeight = b.height;
+		b.parent = left;
+	}
+	
+	var leftHeight = ((aHeight > bHeight) ? aHeight : bHeight) + 1;
+	left.height = leftHeight;
+
+	var rightHeight = (right.right === null) ? 0 : right.right.height;
+	right.height = ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
 };
 
 AvlTree.prototype._balanceLeftLeft = function (node) {
 	var left = node.left;
 	var c = left.right;
 
+	var parent = node.parent;
 	if (node === this.root) {
 		this.root = left;
 	} else {
-		if (node.parent.right === node) {
-			node.parent.right = left;
+		if (parent.right === node) {
+			parent.right = left;
 		} else {
-			node.parent.left = left;
+			parent.left = left;
 		}
 	}
 
 	left.right = node;
-	left.parent = node.parent;
+	left.parent = parent;
 	node.parent = left;
 	node.left = c;
-	if (c !== null) {
+
+	var leftHeight;
+	if (c === null) {
+		leftHeight = 0;
+	} else {
 		c.parent = node;
+		leftHeight = c.height;
 	}
 
-	updateHeight(node);
+	var rightHeight = (node.right === null) ? 0 : node.right.height;
+	node.height = ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
 };
 
 AvlTree.prototype._balanceRightLeft = function (node) {
 	var right = node.right;
+	var left = right.left;
+
 	var a = right.right;
-	var b = right.left.right;
+	var b = left.right;
 
-	right.left.right = right;
-	node.right = right.left;
-	right = node.right;
-	right.parent = node;
+	left.right = right;
+	node.right = left;
 
-	var rightRight = right.right;
-	rightRight.parent = right;
-	rightRight.right = a;
-	rightRight.left = b;
+	left.parent  = node;
+	right.parent = left;
+
+	right.right = a;
+	right.left  = b;
+
+	var aHeight = 0;
 	if (a !== null) {
-		a.parent = rightRight;
-	}
-	if (b !== null) {
-		b.parent = rightRight;
+		aHeight = a.height;
+		a.parent = right;
 	}
 
-	updateHeight(node.right.right);
-	updateHeight(node.right);
+	var bHeight = 0;
+	if (b !== null) {
+		bHeight = b.height;
+		b.parent = right;
+	}
+	
+	var rightHeight = ((aHeight > bHeight) ? aHeight : bHeight) + 1;
+	right.height = rightHeight;
+
+	var leftHeight = (left.left === null) ? 0 : left.left.height;
+	left.height = ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
 };
 
 
@@ -204,26 +233,32 @@ AvlTree.prototype._balanceRightRight = function (node) {
 	right.parent = node.parent;
 	node.parent = right;
 	node.right = c;
-	if (c !== null) {
+
+	var rightHeight;
+	if (c === null) {
+		rightHeight = 0;
+	} else {
 		c.parent = node;
+		rightHeight = c.height;
 	}
 
-	updateHeight(node);
+	var leftHeight = (node.left === null) ? 0 : node.left.height;
+	node.height = ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
 };
 
-AvlTree.prototype._balance = function (node) {
+AvlTree.prototype._balance = function (node, goAllTheWay) {
 	// Balancing the tree
 	var current = node;
 	while (current !== null) {
-		var leftHeight = (current.left === null) ? 0 : current.left.height;
-		var rightHeight = (current.right === null) ? 0 : current.right.height;
-		var newHeight = 1 + Math.max(leftHeight, rightHeight);
+		var left  = current.left;
+		var right = current.right;
 
-		current.height = newHeight;
+		var leftHeight  = (left  === null) ? 0 : left.height;
+		var rightHeight = (right === null) ? 0 : right.height;
+
 		if (leftHeight - rightHeight > 1) {
 			// Left case
-			if (current.left.right !== null &&
-				(current.left.left === null || current.left.left.height < current.left.right.height)) {
+			if (left.right !== null && (left.left === null || left.left.height < left.right.height)) {
 				// Left Right Case
 				this._balanceLeftRight(current);
 			}
@@ -232,8 +267,7 @@ AvlTree.prototype._balance = function (node) {
 			this._balanceLeftLeft(current);
 		} else if (rightHeight - leftHeight > 1) {
 			// Right case
-			if (current.right.left !== null &&
-				(current.right.right === null || current.right.right.height < current.right.left.height)) {
+			if (right.left !== null && (right.right === null || right.right.height < right.left.height)) {
 				// Right Left Case
 				this._balanceRightLeft(current);
 			}
@@ -242,8 +276,17 @@ AvlTree.prototype._balance = function (node) {
 			this._balanceRightRight(current);
 		} else {
 			// TreeNode is balanced
-			current = current.parent;
+			var newHeight = ((leftHeight > rightHeight) ? leftHeight : rightHeight) + 1;
+			if (!goAllTheWay) {
+				if (newHeight === current.height) {
+					break;
+				}
+			}
+
+			current.height = newHeight;
 		}
+
+		current = current.parent;
 	}
 };
 
@@ -260,6 +303,10 @@ AvlTree.prototype.removeByReference = function (node) {
 	var right  = node.right;
 
 	if (node.right === null) {
+		if (left !== null) {
+			left.parent = parent;
+		}
+
 		if (parent === null) {
 			this.root = left;
 		} else {
@@ -268,22 +315,21 @@ AvlTree.prototype.removeByReference = function (node) {
 			} else {
 				parent.left = left;
 			}
+
+			if (left === null) {
+				this._balance(parent, true);
+			} else {
+				if (left.height + 3 <= parent.height) {
+					this._balance(parent, true);
+				}
+			}
 		}
 
-		if (left !== null) {
-			left.parent = parent;
-		}
-
-		this._balance(parent);
 		return true;
 	}
 
 	var replacement = node.right;
-	var balanceFrom;
-
 	if (replacement.left === null) {
-		balanceFrom = replacement;
-
 		if (left !== null) {
 			left.parent = replacement;
 		}
@@ -300,8 +346,7 @@ AvlTree.prototype.removeByReference = function (node) {
 		}
 		replacement.parent = parent;
 
-		this._balance(balanceFrom);
-
+		this._balance(replacement, true);
 		return true;
 	}
 
@@ -320,7 +365,6 @@ AvlTree.prototype.removeByReference = function (node) {
 	}
 	replacement.right = right;
 
-	balanceFrom = replacement.parent;
 
 	if (left !== null) {
 		left.parent = replacement;
@@ -336,9 +380,11 @@ AvlTree.prototype.removeByReference = function (node) {
 			parent.left = replacement;
 		}
 	}
+
+	var balanceFrom = replacement.parent;
 	replacement.parent = parent;
 
-	this._balance(balanceFrom);
+	this._balance(balanceFrom, true);
 
 	// Removing any reference from the node to any other element
 	node.left      = null;
@@ -453,16 +499,43 @@ AvlTree.prototype.toArray = function () {
 	return objects;
 };
 
-function getHeight(node) {
+AvlTree.prototype._isBalanced = function (node, idx) {
+	if (node === null) {
+		return true;
+	}
+
+	var heightLeft  = (node.left  === null) ? 0 : node.left.height;
+	var heightRight = (node.right === null) ? 0 : node.right.height;
+
+idx = idx || 0;
+// console.error(idx, 'objects!!', node.height, node.object, node.left ? node.left.object : null, node.right ? node.right.object : null)
+
+	if (Math.abs(heightLeft - heightRight) > 1 || node.height <= heightLeft || node.height <= heightRight) {
+		console.error('oups!!', node.height, heightLeft, heightRight)
+		console.error('oups!!', node.object, node.left ? node.left.object : null, node.right ? node.right.object : null)
+		return false;
+	}
+
+	return this._isBalanced(node.left, idx+1) && this._isBalanced(node.right, idx+1);
+};
+
+AvlTree.prototype._isSorted = function (node) {
+	if (node === null) {
+		return true;
+	}
+
+	var isSortedLeft  = (node.left  === null) || (this.cmpFunc(node.left.object, node.object)  <= 0);
+	var isSortedRight = (node.right === null) || (this.cmpFunc(node.object, node.right.object) <= 0);
+
+	return isSortedLeft && isSortedRight && this._isSorted(node.left) && this._isSorted(node.right);
+};
+
+AvlTree.prototype._getCount = function (node) {
 	if (node === null) {
 		return 0;
 	}
-	return node.height;
-}
 
-function updateHeight(node) {
-	node.height = Math.max(getHeight(node.left), getHeight(node.right)) + 1;
-}
+	return 1 + this._getCount(node.left) + this._getCount(node.right);
+};
 
 module.exports = AvlTree;
-
