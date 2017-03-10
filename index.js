@@ -499,7 +499,7 @@ AvlTree.prototype.toArray = function () {
 	return objects;
 };
 
-AvlTree.prototype._isBalanced = function (node, idx) {
+AvlTree.prototype._isBalanced = function (node) {
 	if (node === null) {
 		return true;
 	}
@@ -507,16 +507,11 @@ AvlTree.prototype._isBalanced = function (node, idx) {
 	var heightLeft  = (node.left  === null) ? 0 : node.left.height;
 	var heightRight = (node.right === null) ? 0 : node.right.height;
 
-idx = idx || 0;
-// console.error(idx, 'objects!!', node.height, node.object, node.left ? node.left.object : null, node.right ? node.right.object : null)
-
 	if (Math.abs(heightLeft - heightRight) > 1 || node.height <= heightLeft || node.height <= heightRight) {
-		console.error('oups!!', node.height, heightLeft, heightRight)
-		console.error('oups!!', node.object, node.left ? node.left.object : null, node.right ? node.right.object : null)
 		return false;
 	}
 
-	return this._isBalanced(node.left, idx+1) && this._isBalanced(node.right, idx+1);
+	return this._isBalanced(node.left) && this._isBalanced(node.right);
 };
 
 AvlTree.prototype._isSorted = function (node) {
