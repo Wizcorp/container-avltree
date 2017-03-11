@@ -477,6 +477,9 @@ AvlTree.prototype._clearEachNode = function (node) {
 	if (node !== null) {
 		this._clearEachNode(node.left);
 		this._clearEachNode(node.right);
+		node.left      = null;
+		node.right     = null;
+		node.parent    = null;
 		node.container = null;
 	}
 };
