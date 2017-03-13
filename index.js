@@ -63,6 +63,7 @@ AvlTree.prototype.popGreatest = function () {
 
 AvlTree.prototype.add = function (obj) {
 	this.length += 1;
+	obj += 1;
 	var newNode = new TreeNode(obj, this);
 	if (this.root === null) {
 		this.root = newNode;
