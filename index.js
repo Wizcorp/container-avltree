@@ -477,6 +477,9 @@ AvlTree.prototype._clearEachNode = function (node) {
 	if (node !== null) {
 		this._clearEachNode(node.left);
 		this._clearEachNode(node.right);
+		node.left   = null;
+		node.right  = null;
+		node.parent = null;
 		node.container = null;
 	}
 };
@@ -493,40 +496,6 @@ AvlTree.prototype.toArray = function () {
 	var objects = [];
 	this._toArray(this.root, objects);
 	return objects;
-};
-
-AvlTree.prototype._isBalanced = function (node) {
-	if (node === null) {
-		return true;
-	}
-
-	var heightLeft  = (node.left  === null) ? 0 : node.left.height;
-	var heightRight = (node.right === null) ? 0 : node.right.height;
-
-	if (Math.abs(heightLeft - heightRight) > 1 || node.height <= heightLeft || node.height <= heightRight) {
-		return false;
-	}
-
-	return this._isBalanced(node.left) && this._isBalanced(node.right);
-};
-
-AvlTree.prototype._isSorted = function (node) {
-	if (node === null) {
-		return true;
-	}
-
-	var isSortedLeft  = (node.left  === null) || (this.cmpFunc(node.left.object, node.object)  <= 0);
-	var isSortedRight = (node.right === null) || (this.cmpFunc(node.object, node.right.object) <= 0);
-
-	return isSortedLeft && isSortedRight && this._isSorted(node.left) && this._isSorted(node.right);
-};
-
-AvlTree.prototype._getCount = function (node) {
-	if (node === null) {
-		return 0;
-	}
-
-	return 1 + this._getCount(node.left) + this._getCount(node.right);
 };
 
 module.exports = AvlTree;

@@ -10,10 +10,45 @@ function sortLeftToRight(a, b) {
 	return 0;
 }
 
+
+function isBalanced(node) {
+	if (node === null) {
+		return true;
+	}
+
+	var heightLeft  = (node.left  === null) ? 0 : node.left.height;
+	var heightRight = (node.right === null) ? 0 : node.right.height;
+
+	if (Math.abs(heightLeft - heightRight) > 1 || node.height <= heightLeft || node.height <= heightRight) {
+		return false;
+	}
+
+	return isBalanced(node.left) && isBalanced(node.right);
+}
+
+function isSorted(tree, node) {
+	if (node === null) {
+		return true;
+	}
+
+	var isSortedLeft  = (node.left  === null) || (tree.cmpFunc(node.left.object, node.object)  <= 0);
+	var isSortedRight = (node.right === null) || (tree.cmpFunc(node.object, node.right.object) <= 0);
+
+	return isSortedLeft && isSortedRight && isSorted(tree, node.left) && isSorted(tree, node.right);
+}
+
+function getCount(node) {
+	if (node === null) {
+		return 0;
+	}
+
+	return 1 + getCount(node.left) + getCount(node.right);
+}
+
 function assertTree(tree, nbElements) {
-	assert.strictEqual(tree._getCount(tree.root), nbElements);
-	assert.strictEqual(tree._isSorted(tree.root), true);
-	assert.strictEqual(tree._isBalanced(tree.root), true);
+	assert.strictEqual(getCount(tree.root), nbElements);
+	assert.strictEqual(isSorted(tree, tree.root), true);
+	assert.strictEqual(isBalanced(tree.root), true);
 }
 
 describe('avltree-js tests', function() {
